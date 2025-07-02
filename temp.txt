@@ -1,0 +1,52 @@
+#include "basic_library.h"
+#include <stdint.h>
+
+// RCC Register Addresses
+#define RCC_BASE        0x40023800UL
+#define RCC_AHB1ENR     (*(volatile uint32_t*)(RCC_BASE + 0x30))
+#define RCC_APB1ENR     (*(volatile uint32_t*)(RCC_BASE + 0x40))
+
+// GPIOA Register Addresses
+#define GPIOA_BASE      0x40020000UL
+#define GPIOA_MODER     (*(volatile uint32_t*)(GPIOA_BASE + 0x00))
+#define GPIOA_AFRL      (*(volatile uint32_t*)(GPIOA_BASE + 0x20))
+
+// USART2 Register Addresses
+#define USART2_BASE     0x40004400UL
+#define USART2_CR1      (*(volatile uint32_t*)(USART2_BASE + 0x00))
+#define USART2_BRR      (*(volatile uint32_t*)(USART2_BASE + 0x0C))
+#define USART2_ISR      (*(volatile uint32_t*)(USART2_BASE + 0x1C))
+#define USART2_TDR      (*(volatile uint32_t*)(USART2_BASE + 0x04))
+#define RCC_CFGR (*(volatile uint32_t*)(RCC_BASE + 0x08))
+
+
+int main(void) {
+    // === Step 1: Enable Clocks ===
+    RCC_AHB1ENR |= (1 << 0);     // GPIOAEN
+    RCC_APB1ENR |= (1 << 17);    // USART2EN
+
+    // === Step 2: Configure PA2 as Alternate Function (AF7) ===
+    GPIOA_MODER &= ~(0b11 << (2 * 2));       // Clear MODER2
+    GPIOA_MODER |=  (0b10 << (2 * 2));       // Set MODER2 = AF
+    GPIOA_AFRL  &= ~(0b1111 << (4 * 2));     // Clear AFRL2
+    GPIOA_AFRL  |=  (0b0111 << (4 * 2));     // Set AF7 for USART2_TX
+
+    // === Step 3: Configure USART2 ===
+    USART2_CR1 = 0;
+    USART2_BRR = 0x0683;     // BRR = f_ck / baud = 16,000,000 / 9600
+    USART2_CR1 |= (1 << 13); // UE
+    USART2_CR1 |= (1 << 3);  // TE
+
+
+
+    // === Step 4: Transmit 'H' repeatedly ===
+    while (1) {
+    	setLD2(1);
+        // Wait until TXE (bit 7) is set
+        while (!(USART2_ISR & (1 << 7))) {}
+        setLD2(0);
+        USART2_TDR = 'H';
+        // Brief delay to slow down transmission
+        for (volatile int i = 0; i < 100000; ++i);
+    }
+}
