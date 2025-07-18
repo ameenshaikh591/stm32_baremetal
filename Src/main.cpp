@@ -2,7 +2,7 @@
  * main.cpp
  *
  *  Created on: Jul 9, 2025
- *      Author: E0836126
+ *      Author: Ameen Shaikh
  */
 
 
@@ -11,6 +11,7 @@
 #include "gpio.h"
 #include "systick.h"
 #include "uart.h"
+#include "CLI/Manager.h"
 
 GPIO GPIOA = GPIO(PORT_A);
 
@@ -27,22 +28,6 @@ int main(void)
 }
 
 
-/*
- * 	GPIOA.enable();
-	GPIOA.pin_setup(PIN_5, GENERAL_PURPOSE);
-	GPIOA.pin_output(PIN_5, HIGH);
-
-	Systick SysTick;
-
-	SysTick.configure_timer(1);
-	SysTick.enable();
-	SysTick.create_subtimer(500, blink_led);
- */
-
-
-
-
-
 void uart_test() {
 	Systick SysTick;
 	SysTick.configure_timer();
@@ -50,9 +35,9 @@ void uart_test() {
 
 	UART uart_test_obj = UART(usart_num_t::USART2);
 	uart_test_obj.enable();
-	uart_test_obj.send("\rHi\n");
-	//SysTick.delay(500);
-	//uart_test_obj.send("\rAmeen\n");
+
+	Manager my_manager = Manager();
+	my_manager.connect_to_usart(&uart_test_obj);
 
 	while (1) {
 

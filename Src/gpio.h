@@ -2,7 +2,7 @@
  * gpio.h
  *
  *  Created on: Jul 9, 2025
- *      Author: E0836126
+ *      Author: Ameen Shaikh
  */
 
 #ifndef SRC_GPIO_H_

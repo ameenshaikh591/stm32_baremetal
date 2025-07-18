@@ -1,3 +1,5 @@
+"./Src/CLI/CLI.o"
+"./Src/CLI/Manager.o"
 "./Src/gpio.o"
 "./Src/main.o"
 "./Src/syscalls.o"

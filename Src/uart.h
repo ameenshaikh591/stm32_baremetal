@@ -3,6 +3,7 @@
 
 #include <stdint.h>
 #include "gpio.h"
+#include "CLI/Manager.h"
 
 // RCC register definitions
 #define RCC_BASE       (0x40023800UL)
@@ -37,7 +38,11 @@ enum class usart_num_t {
 	USART6,
 };
 
-
+enum class usart_rec_buffer_t {
+	ECHO,
+	LINEAR_BUFFER,
+	RING_BUFFER,
+};
 
 class UART {
 public:
@@ -48,6 +53,9 @@ public:
     void read_byte();
     usart_typedef *usart_port_;
     void send_byte_handler();
+    char* get_buffer_ptr();
+    Manager *usart_manager;
+    bool tx_in_progress = false;
 
 private:
     const int baud_rate = 9600;
@@ -59,10 +67,14 @@ private:
     char *message;
     int message_len;
     int curr_pos;
+    usart_rec_buffer_t rec_buffer_type;
+    char *linear_buffer_ptr;
+    uint8_t buffer_open_index;
 
     inline bool tx_ready();
     void configure_pins();
-    void configure_registers();
+    void configure(usart_rec_buffer_t rec_buffer_type);
+    void store_linear_buffer(char character);
 };
 
 #endif
