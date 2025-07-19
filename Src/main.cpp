@@ -12,6 +12,7 @@
 #include "systick.h"
 #include "uart.h"
 #include "CLI/Manager.h"
+#include "CLI/CLI.h"
 
 GPIO GPIOA = GPIO(PORT_A);
 
@@ -33,11 +34,8 @@ void uart_test() {
 	SysTick.configure_timer();
 	SysTick.enable();
 
-	UART uart_test_obj = UART(usart_num_t::USART2);
-	uart_test_obj.enable();
-
-	Manager my_manager = Manager();
-	my_manager.connect_to_usart(&uart_test_obj);
+	CLI my_cli = CLI();
+	my_cli.run();
 
 	while (1) {
 

@@ -10,6 +10,7 @@
 #include <stdint.h>
 
 #define COMMAND_BUFFER_SIZE 100
+#define QUEUE_RESPONSE_SIZE	10
 
 enum class rec_buffer_t {
 	LINEAR_BUFFER,
@@ -18,6 +19,9 @@ enum class rec_buffer_t {
 
 static char command_buffer[COMMAND_BUFFER_SIZE];
 static char echo_buffer[2];
+static char *queue_response_buffer[QUEUE_RESPONSE_SIZE];
+static uint8_t queue_response_tail = 0;
+static uint8_t queue_response_head = 0;
 
 void Manager::connect_to_usart(UART *usart_obj) {
 	usart_obj->usart_manager = this;

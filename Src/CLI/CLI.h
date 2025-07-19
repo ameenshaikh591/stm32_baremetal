@@ -5,21 +5,19 @@
  *      Author: Ameen Shaikh
  */
 
-/*
+
 #ifndef CLI_H_
 #define CLI_H_
 
 class CLI {
 public:
+	CLI();
 	void run();
-	void setup();
 private:
-	Parser parser;
-	Executer executer;
-	Manager manager;
+	Manager *manager;
 };
 
 
 
 #endif /* CLI_H_ */
-*/
+

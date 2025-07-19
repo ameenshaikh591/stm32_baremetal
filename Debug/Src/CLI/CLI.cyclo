@@ -1,0 +1,2 @@
+../Src/CLI/CLI.cpp:14:1:CLI::CLI()	1
+../Src/CLI/CLI.cpp:18:6:void CLI::run()	1

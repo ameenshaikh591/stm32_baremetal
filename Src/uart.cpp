@@ -94,16 +94,20 @@ void UART::configure(usart_rec_buffer_t rec_buffer_type) {
 }
 
 extern "C" void USART2_IRQHandler(void) {
-    int usart2_inst_index = 1;
-    UART* usart2 = UART::usart_instances[usart2_inst_index];
+    auto* uart = UART::usart_instances[1];
+    uint32_t sr = uart->usart_port_->SR;
 
-    if (usart2->usart_port_->SR & USARTx_SR_RXNE) {
-        usart2->read_byte();
+    if ((sr & USARTx_SR_TXE) &&
+        (uart->usart_port_->CR1 & USARTx_CR1_TXEIE))
+    {
+        uart->send_byte_handler();
     }
-    if ((usart2->usart_port_->SR & USARTx_SR_TXE) && usart2->tx_in_progress) {
-        usart2->send_byte_handler();
+
+    if (sr & USARTx_SR_RXNE) {
+        uart->read_byte();
     }
 }
+
 
 void UART::send_byte_handler() {
     if (curr_pos < message_len - 1) {
